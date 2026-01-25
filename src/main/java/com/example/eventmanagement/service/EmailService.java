@@ -28,4 +28,14 @@ public class EmailService {
 
         mailSender.send(message);
     }
+	
+	public void sendSeatConfirmationNotification(String to, String notificationSubject, String notificationMessage) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(notificationSubject);
+        message.setText(notificationMessage);
+
+        mailSender.send(message);
+    }
 }

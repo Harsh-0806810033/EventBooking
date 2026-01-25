@@ -33,4 +33,9 @@ public class EventService {
 
         eventRepository.delete(event);
     }
+    
+    public List<Event> searchEvents(String keyword) {
+        return eventRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrLocationContainingIgnoreCase(keyword, keyword, keyword);
+    }
+
 }

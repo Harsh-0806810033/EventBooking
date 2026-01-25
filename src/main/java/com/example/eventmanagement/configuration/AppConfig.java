@@ -10,6 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.eventmanagement.entities.User;
 import com.example.eventmanagement.repository.UserRepository;
 
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sns.SnsClient;
+
 @Configuration
 public class AppConfig {
 
@@ -31,5 +34,12 @@ public class AppConfig {
 	@Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+	
+	@Bean
+    public SnsClient snsClient() {
+        return SnsClient.builder()
+                .region(Region.AP_SOUTH_1)
+                .build(); // uses env vars automatically
     }
 }

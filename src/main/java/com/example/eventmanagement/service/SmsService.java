@@ -2,11 +2,17 @@ package com.example.eventmanagement.service;
 
 import org.springframework.stereotype.Service;
 
+import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.PublishRequest;
+import software.amazon.awssdk.services.sns.model.PublishResponse;
+
 @Service
 public class SmsService {
 
+	private SnsClient snsClient;
 
-    public SmsService() {
+    public SmsService(SnsClient snsClient) {
+    	this.snsClient=snsClient;
     }
 
     /**
@@ -31,9 +37,15 @@ public class SmsService {
     public void sendSms(String to, String message) {
         if (to == null || to.isEmpty()) return;
 
-        // Make sure the recipient joined the sandbox: prepend "whatsapp:"
 
-        System.out.println("WhatsApp message sent to " + to);
+        PublishResponse publishResponse = snsClient.publish(
+        	    PublishRequest.builder()
+        	        .phoneNumber("+91"+to)
+        	        .message(message)
+        	        .build()
+        	);
+
+        System.out.println(publishResponse);
     }
 
     /**

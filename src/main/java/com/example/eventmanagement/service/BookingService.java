@@ -1,6 +1,7 @@
 package com.example.eventmanagement.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -18,15 +19,15 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final EventRepository eventRepository;
-    //private final SmsService smsService;
+    private final SmsService smsService;
     private final EmailService emailService;
 
     public BookingService(BookingRepository bookingRepository,
-			EventRepository eventRepository, EmailService emailService/* , SmsService smsService */) {
+			EventRepository eventRepository, EmailService emailService , SmsService smsService ) {
         this.bookingRepository = bookingRepository;
         this.eventRepository = eventRepository;
         this.emailService = emailService;
-        //this.smsService = smsService;
+        this.smsService = smsService;
     }
 
     /**
@@ -66,14 +67,29 @@ public class BookingService {
         String message = "Booking confirmed! Seat #" + booking.getSeatNumber() +
                          " for event: " + event.getName();
         
+        String notificationMessage = """
+        		Hello,
+        		Your seat has been confirmed.
+        		Event: %s,
+        		Seat Number: %s,
+        		Location: %s,
+        		Timing: %s
+        		Thank You!!
+        		
+        		""".formatted(event.getName(), nextSeatNumber,event.getLocation(), event.getEventDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy 'at' hh:mm a")));
+        
+        String notificationSubject = "Seat Confirmation - " + event.getName();
+        
         // Send notifications based on provided info
         if (request.getEmail() != null && !request.getEmail().isEmpty()) {
-            //emailService.sendSeatConfirmation(request.getEmail(), event.getName(), nextSeatNumber);
         	System.out.println("Send Email Notification");
+            //emailService.sendSeatConfirmation(request.getEmail(), event.getName(), nextSeatNumber);
+        	emailService.sendSeatConfirmationNotification(request.getEmail(), notificationSubject, notificationMessage);
+        	
         }
         if (request.getPhoneNumber() != null && !request.getPhoneNumber().isEmpty()) {
-            //smsService.sendSms(request.getPhoneNumber(), message);
         	System.out.println("Send notification to user phone: "+request.getPhoneNumber());
+            smsService.sendSms(request.getPhoneNumber(), notificationMessage);
         }
         
         return booking;
@@ -103,4 +119,19 @@ public class BookingService {
         event.setAvailableSeats(event.getAvailableSeats() + 1);
         eventRepository.save(event);
     }
+    
+    public List<Booking> searchBookings(String keyword, String email, Integer seatNumber) {
+        return bookingRepository.search(keyword, email, seatNumber);
+    }
+    
+    public List<Booking> searchBookingsEventId(
+            Long eventId,
+            String keyword,
+            String email,
+            Integer seatNumber) {
+
+        return bookingRepository.searchByEvent(
+                eventId, keyword, email, seatNumber);
+    }
+
 }
