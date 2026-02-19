@@ -126,3 +126,48 @@ Stop containers and remove volumes (database data):
 docker compose down -v
 ```
 
+---
+
+## 🚀 Below are the Improvements we have done with this
+Improvements:
+1. **Used multi-stage builds where appropriate.**
+2. **Configured Docker to run containers with the least privilege.**
+3. **Set up a custom Docker network and connect multiple containers to it.**
+4. **Uses Docker volumes to persist data for your containers.**
+5. **Used named volumes and bind mounts**
+6. **Used tools like Docker Bench for Security to audit Docker environment.**
+---
+
+## 🐳 Lets go through each points
+
+### Points
+
+**Used multi-stage builds where appropriate.**
+
+```dockerfile
+# -------- Stage 1: Build --------
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# -------- Stage 2: Runtime --------
+FROM eclipse-temurin:17-jre-alpine
+
+RUN addgroup -S spring && adduser -S spring -G spring
+WORKDIR /app
+
+COPY --from=build /app/target/*.jar app.jar
+
+RUN chown spring:spring app.jar
+USER spring
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-jar", "app.jar"]
+
+```
