@@ -24,7 +24,7 @@ services:
       - app_db_password
       - mysql_root_password
 
-  app:
+  eventmanagement_app:
     build: .
     container_name: event_booking_app
     restart: always

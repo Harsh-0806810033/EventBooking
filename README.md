@@ -12,8 +12,9 @@ This document provides a detailed, step-by-step explanation of:
 - **Maven**: Version latest
 - **Docker**: Version 20.10 or later  
 - **Docker Compose**: Version 1.29 or later  
-- **GitHub Repository**:  
+- **GitHub Repository**: 
   https://github.com/Harsh-0806810033/EventBooking.git
+- - **GitHub Branch**: docker-advance
 
 ---
 
@@ -31,7 +32,7 @@ This document provides a detailed, step-by-step explanation of:
 
 ### Docker Image
 - **Image Name:** `harshnagarro/event-booking-app`
-- **Version:** `1.0`
+- **Version:** `2.0`
 - **Registry:** Docker Hub (Private Repository)
 
 
@@ -39,81 +40,12 @@ This document provides a detailed, step-by-step explanation of:
 
 ## 🚀 Instructions to Set Up and Run the Project
 
-This project can be run in **two ways**:
-1. **Using Dockerfile (build Docker image locally)**
-2. **Using prebuilt Docker image**
-
+This project can be run with below steps:
+1. **Docker image already build and pushed in docker hub repository: harshnagarro/event-booking-app**
+2. **Using same image in docker-compose.yml, we use docker-compose to deploy application.**
 ---
 
-## 🐳 Option 1: Run Using Dockerfile (Build Image Locally)
-
-### Steps
-
-**Clone the repository**
-
-```bash
-git clone https://github.com/Harsh-0806810033/EventBooking.git
-````
-
-**Navigate into the project folder**
-
-```bash
-cd EventBooking
-```
-
-**Build the JAR file**
-
-```bash
-mvn clean package
-```
-
-**Update docker-compose.yml**
-
-* Uncomment `service.app.build`
-* Comment `service.app.image`
-
-Example:
-
-```yaml
-app:
-  build: .
-  # image: harshnagarro/event-booking-app:1.0
-```
-
-**Build Docker image and start containers**
-
-```bash
-docker compose up --build -d
-```
-
-**Verify running containers**
-
-```bash
-docker compose ps
-```
-
-**Check application logs**
-
-```bash
-docker logs -f eventmanagement_app
-```
-
-**Access the application**
-
-```
-http://localhost:8080
-```
-
-**Login credentials**
-
-```
-Username: admin@test.com
-Password: password
-```
-
----
-
-## 🐳 Option 2: Run Using Prebuilt Docker Image
+## 🐳 Run Using Prebuilt Docker Image (docker compose)
 
 ### Steps
 
@@ -123,29 +55,29 @@ Password: password
 git clone https://github.com/Harsh-0806810033/EventBooking.git
 ```
 
+**Git checkout to branch - docker-advance**
 **Navigate into the project folder**
 
 ```bash
 cd EventBooking
 ```
 
-**Update `docker-compose.yml`**
+**View `docker-compose.yml`**
 
-* Comment `service.app.build`
-* Uncomment `service.app.image`
+* Make sure it has below image
 
 Example:
 
 ```yaml
 app:
   # build: .
-  image: harshnagarro/event-booking-app:1.0
+  image: harshnagarro/event-booking-app:2.0
 ```
 
 **Start the containers**
 
 ```bash
-docker compose up -d
+docker compose up --build -d
 ```
 
 **Verify running containers**
