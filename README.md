@@ -56,6 +56,11 @@ git clone https://github.com/Harsh-0806810033/EventBooking.git
 ```
 
 **Git checkout to branch - docker-advance**
+
+```bash
+git checkout -b docker-advance origin/docker-advance
+```
+
 **Navigate into the project folder**
 
 ```bash
