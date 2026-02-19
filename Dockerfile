@@ -1,16 +1,24 @@
-# Use official OpenJDK 17 image
-#FROM openjdk:17-jdk-slim
-FROM azul/zulu-openjdk:17
+# -------- Stage 1: Build --------
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Working directory inside container
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# -------- Stage 2: Runtime --------
+FROM eclipse-temurin:17-jre-alpine
+
+RUN addgroup -S spring && adduser -S spring -G spring
 WORKDIR /app
 
-# Copy the jar built by Maven or Gradle
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+COPY --from=build /app/target/*.jar app.jar
 
-# Expose the port the app will run on
+RUN chown spring:spring app.jar
+USER spring
+
 EXPOSE 8080
 
-# Run the app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-jar", "app.jar"]
