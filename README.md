@@ -171,3 +171,12 @@ EXPOSE 8080
 ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-jar", "app.jar"]
 
 ```
+
+**Configured Docker to run containers with the least privilege.**
+
+```dockerfile
+RUN addgroup -S spring && adduser -S spring -G spring
+```
+Creates a non-root user named spring.
+*addgroup -S spring → create system group*
+*adduser -S spring -G spring → create system user in that group*
